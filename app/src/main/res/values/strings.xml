@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Spotify Streamer</string>
+
+    <string name="content_artist_thumb">Artist thumbnail for %1$s</string>
+    <string name="content_results">Search results</string>
+    <string name="content_search">Search for artist</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="toast_error_not_online">Oops! It looks like you device is offline.</string>
+    <string name="toast_error_results">Oops! There was an error searching for %1$s</string>
+    <string name="toast_no_results">No results found for %1$s</string>
+    <string name="toast_not_implemented">This feature is not yet implemented</string>
+</resources>

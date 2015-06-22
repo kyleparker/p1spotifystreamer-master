@@ -1,0 +1,22 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin_double">32dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_margin_half">8dp</dimen>
+
+    <dimen name="artist_card_height">224dp</dimen>
+    <dimen name="artist_card_image_height">128dp</dimen>
+    <dimen name="artist_card_detail_height">96dp</dimen>
+
+    <dimen name="cardview_corner_radius">0dp</dimen>
+    <dimen name="cardview_elevation">4dp</dimen>
+
+    <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="text_size_large">22sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+
+    <dimen name="flexible_space_image_height">280dp</dimen>
+    <dimen name="intersection_height">16dp</dimen>
+</resources>

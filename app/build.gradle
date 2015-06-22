@@ -1,0 +1,56 @@
+apply plugin: 'com.android.application'
+apply plugin: 'jacoco'
+jacoco { toolVersion = "0.7.1.201405082137" }
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        applicationId "kyleparker.example.com.p1spotifystreamer"
+        minSdkVersion 16
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
+dependencies {
+    compile(name:'spotify-web-api-android-0.1.0', ext:'aar')
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:palette-v7:21.0.2'
+    compile 'com.android.support:cardview-v7:21.0.2'
+    compile 'com.android.support:recyclerview-v7:21.0.2'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    // https://github.com/kaaes/spotify-web-api-android
+    // This project depends on Retrofit 1.9.0 and OkHttp 2.2.0. When you build it, it creates an aar that doesn't contain
+    // Retrofit and OkHttp files. To make your app work you'll need to include these dependencies in your app's gradle.build file.
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.squareup.okhttp:okhttp:2.2.0'
+
+    // https://github.com/kanytu/android-parallax-recyclerview
+    // Parallax scrolling for a RecyclerView
+//    compile 'com.github.kanytu:android-parallax-recyclerview:v1.2'
+
+    // https://github.com/ksoichiro/android-observablescrollview
+    // Parallax scrolling for a RecyclerView
+    compile 'com.github.ksoichiro:android-observablescrollview:v1.5.2'
+    compile 'com.nineoldandroids:library:2.4.0'
+}

@@ -292,8 +292,8 @@ public class ArtistTrackListFragment extends Fragment implements ObservableScrol
         mHeaderBackground = mRootView.findViewById(R.id.header_background);
         mListBackgroundView = mRootView.findViewById(R.id.list_background);
 
-        TextView titleView = (TextView) mRootView.findViewById(R.id.title);
-        titleView.setText(mArtistName);
+        TextView subtitleView = (TextView) mRootView.findViewById(R.id.subtitle);
+        subtitleView.setText(mArtistName);
 
         final ObservableRecyclerView scrollable = createScrollable();
         ScrollUtils.addOnGlobalLayoutListener(scrollable, new Runnable() {

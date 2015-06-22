@@ -27,7 +27,12 @@
 
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/text_light</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/text_size_title</item>
+    </style>
+
+    <style name="ActionBar.SubTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/text_light</item>
+        <item name="android:textSize">@dimen/text_size_subtitle</item>
     </style>
 
     <style name="Button" parent="Widget.AppCompat.Button">

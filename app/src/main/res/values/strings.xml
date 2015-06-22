@@ -4,6 +4,7 @@
     <string name="content_artist_thumb">Artist thumbnail for %1$s</string>
     <string name="content_results">Search results</string>
     <string name="content_search">Search for artist</string>
+    <string name="content_top_ten_tracks">Top 10 Tracks</string>
 
     <string name="action_settings">Settings</string>
 

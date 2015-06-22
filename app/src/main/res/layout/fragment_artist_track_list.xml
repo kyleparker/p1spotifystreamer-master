@@ -45,13 +45,24 @@
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:paddingLeft="72dp"
-                android:textColor="@color/text_light"
-                android:textSize="20sp"/>
+                style="@style/ActionBar.TitleText"
+                android:text="@string/content_top_ten_tracks"
+                android:paddingTop="@dimen/activity_margin_half"/>
+
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="72dp"
+                style="@style/ActionBar.SubTitleText"/>
         </LinearLayout>
     </FrameLayout>
 

@@ -39,7 +39,7 @@ import retrofit.client.Response;
 // DONE: App contains a search field that allows the user to enter in the name of an artist to search for
 // DONE: When an artist name is entered, app displays list of artist results
 // DONE: App displays a Toast if the artist name is not found (asks to refine search)
-// DONE: When an artist is selected, app launches the “Top Tracks” View
+// DONE: When an artist is selected, app launches the "Top Tracks" View
 // DONE: App implements Artist Search + GetTopTracks API Requests (using spotify wrapper)
 /**
  * Fragment to display the search box and results of the user query

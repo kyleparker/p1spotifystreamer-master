@@ -1,23 +1,17 @@
 package kyleparker.example.com.p1spotifystreamer.ui.fragment;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -28,8 +22,10 @@ import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kyleparker.example.com.p1spotifystreamer.R;
+import kyleparker.example.com.p1spotifystreamer.object.MyArtist;
 import kyleparker.example.com.p1spotifystreamer.util.Adapters;
 import kyleparker.example.com.p1spotifystreamer.util.Constants;
+import kyleparker.example.com.p1spotifystreamer.util.Utils;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
@@ -41,19 +37,25 @@ import retrofit.client.Response;
 // DONE: App displays a Toast if the artist name is not found (asks to refine search)
 // DONE: When an artist is selected, app launches the "Top Tracks" View
 // DONE: App implements Artist Search + GetTopTracks API Requests (using spotify wrapper)
+// DONE: Save result list on device rotation - activity:configChanges, setRetainInstance or saveInstanceState
+// DONE: Use SearchView instead of EditText
+// DONE: Check for network connection before query
+// DONE: Display loading spinner for search results
+// TODO: Learn about "headless fragments" and setRetainInstance instead of Parcelable for saving data on rotation
 /**
  * Fragment to display the search box and results of the user query
  *
  * Created by kyleparker on 6/16/2015.
  */
-public class ArtistListFragment extends Fragment {
+public class ArtistListFragment extends Fragment  {
     private Activity mActivity;
     private View mRootView;
     private View mHeader;
-    private EditText mEditQuery;
+    private SearchView mSearchView;
     private RecyclerView mRecyclerView;
+    private ProgressDialog mProgressDialog;
 
-    private List<Artist> mArtistList;
+    private ArrayList<MyArtist> mArtistList;
     private Adapters.ArtistAdapter mAdapter;
     private GridLayoutManager mGridLayoutManager;
 
@@ -79,31 +81,24 @@ public class ArtistListFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setupView();
+
         if (savedInstanceState != null) {
-            mQuery = savedInstanceState.getString(Constants.KEY_QUERY);
-
-            if (!TextUtils.isEmpty(mQuery)) {
-                mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
-                // Spotify search using callback
-                SpotifyApi api = new SpotifyApi();
-                SpotifyService service = api.getService();
-
-                service.searchArtists(mQuery, mSpotifyCallback);
+            mArtistList = savedInstanceState.getParcelableArrayList(Constants.KEY_ARTIST_ARRAY);
+            if (!mArtistList.isEmpty()) {
+                mAdapter.showHeader(mHeader, true);
+                mAdapter.addAll(mArtistList);
             }
         }
-
-        handleSearch();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mQuery != null) {
-            outState.putString(Constants.KEY_QUERY, mQuery);
-        }
-        // TODO: Can the ArtistPager be added to the bundle? Would reduce an extra hit to the server to return the results
-
         super.onSaveInstanceState(outState);
+
+        if (mArtistList != null) {
+            outState.putParcelableArrayList(Constants.KEY_ARTIST_ARRAY, mArtistList);
+        }
     }
 
     @Override
@@ -134,7 +129,7 @@ public class ArtistListFragment extends Fragment {
      * NOTE: In addition to reviewing the Android Developer documentation for RecyclerView, additional ideas and functionality
      * were pulled from this blog post: http://blog.sqisland.com/2014/12/recyclerview-grid-with-header.html.
      */
-    private void handleSearch() {
+    private void setupView() {
         int artistsPerRow = mActivity.getResources().getInteger(R.integer.artists_per_row);
 
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.artist_list);
@@ -161,38 +156,49 @@ public class ArtistListFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         // Setup the input text to respond to the search action from the keyboard
-        mEditQuery = (EditText) mRootView.findViewById(R.id.edit_search);
-        mEditQuery.setOnEditorActionListener(mEditorActionListener);
-        mEditQuery.setOnTouchListener(mOnTouchListener);
+        mSearchView = (SearchView) mRootView.findViewById(R.id.edit_search);
+        mSearchView.setIconifiedByDefault(false);
+        mSearchView.setOnTouchListener(mOnTouchListener);
+        mSearchView.setOnQueryTextListener(mOnQueryTextListener);
+        mSearchView.setQueryHint(getResources().getString(R.string.content_search));
     }
 
     /**
-     * Define an action listener for the search EditText. This will hide the keyboard and call the
+     * Define an query text listener for the SearchView. This will hide the keyboard and call the
      * Spotify service using the query. A {@link retrofit.Callback<ArtistsPager>} will handle updating
      * the UI and display the results. If no results are found, a toast message will be displayed.
      */
-    private TextView.OnEditorActionListener mEditorActionListener = new TextView.OnEditorActionListener() {
+    private SearchView.OnQueryTextListener mOnQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
-        public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                mGridLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
+        public boolean onQueryTextSubmit(String query) {
+            mQuery = mSearchView.getQuery().toString();
+            mGridLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
 
-                // Hide the keyboard after the user has submitted the search query
-                InputMethodManager inputManager = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(textView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
-                mQuery = textView.getText().toString();
-
+            if (Utils.isOnline(mActivity)) {
                 if (!TextUtils.isEmpty(mQuery)) {
+                    // Hide the keyboard after the user has submitted the search query
+                    mSearchView.clearFocus();
+
+                    mProgressDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.content_loading));
+                    mProgressDialog.show();
+
                     // Spotify search using callback
                     SpotifyApi api = new SpotifyApi();
                     SpotifyService service = api.getService();
 
                     service.searchArtists(mQuery, mSpotifyCallback);
+                } else {
+                    Toast.makeText(getActivity(), getResources().getString(R.string.toast_error_no_query), Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(getActivity(), getResources().getString(R.string.toast_error_not_online), Toast.LENGTH_SHORT).show();
             }
+            return false;
+        }
 
-            return true;
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            return false;
         }
     };
 
@@ -204,14 +210,12 @@ public class ArtistListFragment extends Fragment {
         @Override
         public void onItemClick(View view, int position) {
             // Subtract one from the position to account for the header
-            Artist artist = mAdapter.getItem(position - 1);
+            MyArtist artist = mAdapter.getItem(position - 1);
 
             if (artist != null) {
-                Log.i("***> artist", position - 1 + ": " + artist.name);
                 // Notify the active callbacks interface (the activity, if the fragment is attached to one) that
                 // an item has been selected.
-                String imageUrl = artist.images.size() > 0 ? artist.images.get(0).url : "";
-                mCallbacks.onItemSelected(artist.id, artist.name, imageUrl);
+                mCallbacks.onItemSelected(artist.id, artist.name, artist.getImageUrl());
             }
         }
     };
@@ -224,7 +228,8 @@ public class ArtistListFragment extends Fragment {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             // Clear the input when the user touches on the box - prepare for a new search
-            mEditQuery.getText().clear();
+            mSearchView.setQuery("", false);
+            mSearchView.clearFocus();
             return false;
         }
     };
@@ -248,7 +253,20 @@ public class ArtistListFragment extends Fragment {
 //                options.put(SpotifyService.OFFSET, 0);
 //                options.put(SpotifyService.LIMIT, 10);
 
-                mArtistList = artistsPager.artists.items;
+                mArtistList = new ArrayList<>();
+                List<Artist> artistList = artistsPager.artists.items;
+
+                for (Artist artist : artistList) {
+                    MyArtist myArtist = new MyArtist();
+
+                    myArtist.id = artist.id;
+                    myArtist.name = artist.name;
+                    if (artist.images != null && artist.images.size() > 0) {
+                        myArtist.setImageUrl(artist.images.get(0).url);
+                    }
+
+                    mArtistList.add(myArtist);
+                }
 
                 // In order to update the adapter and the RecyclerView, the addAll method must be run on the main UI thread
                 // The callback does not have access to the original view from this thread
@@ -257,6 +275,7 @@ public class ArtistListFragment extends Fragment {
                     public void run() {
                         mAdapter.showHeader(mHeader, true);
                         mAdapter.addAll(mArtistList);
+                        mProgressDialog.dismiss();
                     }
                 });
             } else {
@@ -277,6 +296,7 @@ public class ArtistListFragment extends Fragment {
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    mProgressDialog.dismiss();
                     Toast.makeText(mActivity, includeQuery ?
                             mActivity.getString(resId, mQuery) : mActivity.getString(resId), Toast.LENGTH_LONG).show();
                 }

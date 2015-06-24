@@ -1,6 +1,7 @@
 package kyleparker.example.com.p1spotifystreamer.ui.fragment;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -49,6 +50,7 @@ import kyleparker.example.com.p1spotifystreamer.object.MyTrack;
 import kyleparker.example.com.p1spotifystreamer.ui.BaseActivity;
 import kyleparker.example.com.p1spotifystreamer.util.Adapters;
 import kyleparker.example.com.p1spotifystreamer.util.Constants;
+import kyleparker.example.com.p1spotifystreamer.util.Utils;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
@@ -61,7 +63,8 @@ import retrofit.client.Response;
 // DONE: Handle device rotation - when the list is partially scrolled and orientation changes, the header doesn't reset
 // DONE: App stores the most recent top tracks query results and their respective metadata (track name, artist name, album name)
 // locally in list. The queried results are retained on rotation.
-// TODO: Display a message if no tracks found for artist
+// DONE: Display a message if no tracks found for artist
+// DONE: Display a loading spinner during the data retrieval
 /**
  * Fragment to display the top 10 tracks for a selected artist
  *
@@ -82,6 +85,7 @@ public class ArtistTrackListFragment extends Fragment implements ObservableScrol
     private View mListBackgroundView;
     private View mHeaderBackground;
     private ImageView mImage;
+    private ProgressDialog mProgressDialog;
 
     private int mActionBarSize;
     private int mFlexibleSpaceImageHeight;
@@ -115,7 +119,9 @@ public class ArtistTrackListFragment extends Fragment implements ObservableScrol
 
         if (savedInstanceState != null) {
             mTrackList = savedInstanceState.getParcelableArrayList(Constants.KEY_TRACK_ARRAY);
-            mAdapter.addAll(mTrackList);
+            if (!mTrackList.isEmpty()) {
+                mAdapter.addAll(mTrackList);
+            }
         } else {
             getArtistTrackList();
         }
@@ -252,16 +258,23 @@ public class ArtistTrackListFragment extends Fragment implements ObservableScrol
      * TODO: Create a setting to allow the user to select the country - initially, default to US
      */
     private void getArtistTrackList() {
-        // Spotify search using callback
-        SpotifyApi api = new SpotifyApi();
-        SpotifyService service = api.getService();
+        if (Utils.isOnline(mActivity)) {
+            mProgressDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.content_loading));
+            mProgressDialog.show();
 
-        Map<String, Object> options = new HashMap<>();
-        options.put(SpotifyService.COUNTRY, Constants.US_COUNTRY_ID);
-        options.put(SpotifyService.OFFSET, 0);
-        options.put(SpotifyService.LIMIT, 10);
+            // Spotify search using callback
+            SpotifyApi api = new SpotifyApi();
+            SpotifyService service = api.getService();
 
-        service.getArtistTopTrack(mArtistId, options, mSpotifyCallback);
+            Map<String, Object> options = new HashMap<>();
+            options.put(SpotifyService.COUNTRY, Constants.US_COUNTRY_ID);
+            options.put(SpotifyService.OFFSET, 0);
+            options.put(SpotifyService.LIMIT, 10);
+
+            service.getArtistTopTrack(mArtistId, options, mSpotifyCallback);
+        } else {
+            Toast.makeText(getActivity(), getResources().getString(R.string.toast_error_not_online), Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -403,8 +416,10 @@ public class ArtistTrackListFragment extends Fragment implements ObservableScrol
 
                     myTrack.id = track.id;
                     myTrack.name = track.name;
+                    if (track.album.images != null && track.album.images.size() > 0) {
+                        myTrack.setImageUrl(track.album.images.get(0).url);
+                    }
                     myTrack.album.name = track.album.name;
-                    myTrack.album.images = track.album.images;
 
                     mTrackList.add(myTrack);
                 }
@@ -415,6 +430,7 @@ public class ArtistTrackListFragment extends Fragment implements ObservableScrol
                     @Override
                     public void run() {
                         mAdapter.addAll(mTrackList);
+                        mProgressDialog.dismiss();
                     }
                 });
             } else {
@@ -431,6 +447,7 @@ public class ArtistTrackListFragment extends Fragment implements ObservableScrol
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    mProgressDialog.dismiss();
                     Toast.makeText(mActivity, mActivity.getString(resId, mArtistName), Toast.LENGTH_LONG).show();
                 }
             });

@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import kyleparker.example.com.p1spotifystreamer.R;
 import kyleparker.example.com.p1spotifystreamer.ui.fragment.ArtistListFragment;
-import kyleparker.example.com.p1spotifystreamer.ui.fragment.ArtistTrackListFragment;
 import kyleparker.example.com.p1spotifystreamer.util.Constants;
 
 // DONE: Convert to fragments and provide a tablet layout

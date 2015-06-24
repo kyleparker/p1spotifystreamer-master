@@ -3,14 +3,14 @@ package kyleparker.example.com.p1spotifystreamer.object;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.Artist;
 
 /**
- * Custom {@link Track} object used to implement Parcelable
+ * Custom {@link Artist} object used to implement Parcelable
  *
- * Created by kyleparker on 6/18/2015.
+ * Created by kyleparker on 6/23/2015.
  */
-public class MyTrack extends Track implements Parcelable {
+public class MyArtist extends Artist implements Parcelable {
     private String imageUrl;
 
     public String getImageUrl() {
@@ -20,7 +20,7 @@ public class MyTrack extends Track implements Parcelable {
         this.imageUrl = imageUrl;
     }
 
-    public MyTrack() { }
+    public MyArtist() { }
 
     @Override
     public int describeContents() {
@@ -33,34 +33,26 @@ public class MyTrack extends Track implements Parcelable {
             parcel.writeString(id);
             parcel.writeString(name);
             parcel.writeString(imageUrl);
-            parcel.writeString(album.name);
-
-            parcel.writeList(artists);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private MyTrack(Parcel source) {
+    private MyArtist(Parcel source) {
         id = source.readString();
         name = source.readString();
         imageUrl = source.readString();
-        album.name = source.readString();
-
-        ClassLoader classLoader = getClass().getClassLoader();
-
-        artists = source.readParcelable(classLoader);
     }
 
-    public static final Creator<MyTrack> CREATOR = new Creator<MyTrack>() {
+    public static final Creator<MyArtist> CREATOR = new Creator<MyArtist>() {
         @Override
-        public MyTrack createFromParcel(Parcel in) {
-            return new MyTrack(in);
+        public MyArtist createFromParcel(Parcel in) {
+            return new MyArtist(in);
         }
 
         @Override
-        public MyTrack[] newArray(int size) {
-            return new MyTrack[size];
+        public MyArtist[] newArray(int size) {
+            return new MyArtist[size];
         }
     };
 }

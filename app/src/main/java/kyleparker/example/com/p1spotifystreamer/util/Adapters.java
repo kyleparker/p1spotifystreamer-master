@@ -2,6 +2,7 @@ package kyleparker.example.com.p1spotifystreamer.util;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import kaaes.spotify.webapi.android.models.Artist;
 import kyleparker.example.com.p1spotifystreamer.R;
+import kyleparker.example.com.p1spotifystreamer.object.MyArtist;
 import kyleparker.example.com.p1spotifystreamer.object.MyTrack;
 
 /**
@@ -30,14 +31,14 @@ import kyleparker.example.com.p1spotifystreamer.object.MyTrack;
 public class Adapters {
     public static class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
         private Context context;
-        private List<Artist> items;
+        private List<MyArtist> items;
         private View header;
         private OnItemClickListener itemClickListener;
 
         private static final int ITEM_VIEW_TYPE_HEADER = 0;
         private static final int ITEM_VIEW_TYPE_ITEM = 1;
 
-        public ArtistAdapter(Context context, View header, List<Artist> items) {
+        public ArtistAdapter(Context context, View header, List<MyArtist> items) {
             this.context = context;
             this.header = header;
             this.items = items;
@@ -65,13 +66,13 @@ public class Adapters {
             }
 
             // Subtract 1 for the header
-            Artist item = items.get(position - 1);
+            MyArtist item = items.get(position - 1);
 
             if (item != null) {
                 viewHolder.getArtistName().setText(item.name);
-                if (!item.images.isEmpty()) {
+                if (!TextUtils.isEmpty(item.getImageUrl())) {
                     Picasso.with(context)
-                            .load(item.images.get(0).url)
+                            .load(item.getImageUrl())
                             .resize(300, 300)
                             .centerCrop()
                             .into(viewHolder.getArtistThumb(), getLoaderCallback(viewHolder.getProgress()));
@@ -88,7 +89,7 @@ public class Adapters {
             return items.size() + 1;
         }
 
-        public Artist getItem(int position) {
+        public MyArtist getItem(int position) {
             return items.get(position);
         }
 
@@ -101,7 +102,7 @@ public class Adapters {
             return position == 0;
         }
 
-        public void addAll(List<Artist> artists) {
+        public void addAll(List<MyArtist> artists) {
             items.clear();
             items.addAll(artists);
             notifyDataSetChanged();
@@ -211,9 +212,9 @@ public class Adapters {
             if (item != null) {
                 viewHolder.getAlbumName().setText(item.album.name);
                 viewHolder.getTrackName().setText(item.name);
-                if (!item.album.images.isEmpty()) {
+                if (!TextUtils.isEmpty(item.getImageUrl())) {
                     Picasso.with(mContext)
-                            .load(item.album.images.get(0).url)
+                            .load(item.getImageUrl())
                             .resize(300, 300)
                             .centerCrop()
                             .into(viewHolder.getAlbumThumb(), getLoaderCallback(viewHolder.getProgress()));

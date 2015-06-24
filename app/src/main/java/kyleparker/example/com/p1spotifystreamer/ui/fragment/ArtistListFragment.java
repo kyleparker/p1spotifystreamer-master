@@ -42,6 +42,7 @@ import retrofit.client.Response;
 // DONE: Check for network connection before query
 // DONE: Display loading spinner for search results
 // TODO: Learn about "headless fragments" and setRetainInstance instead of Parcelable for saving data on rotation
+
 /**
  * Fragment to display the search box and results of the user query
  *

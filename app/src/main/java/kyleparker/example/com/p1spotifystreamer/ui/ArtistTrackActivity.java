@@ -11,7 +11,8 @@ import kyleparker.example.com.p1spotifystreamer.ui.fragment.ArtistTrackListFragm
 import kyleparker.example.com.p1spotifystreamer.util.Constants;
 
 /**
- * Activity for phones to display the top 10 tracks for an artist. Include {@link ArtistTrackListFragment} to display the results.
+ * Activity for phones to display the top 10 tracks for an artist. Include {@link ArtistTrackListFragment} to display
+ * the results.
  *
  * Created by kyleparker on 6/16/2015.
  */

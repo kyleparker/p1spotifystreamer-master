@@ -65,6 +65,7 @@ import retrofit.client.Response;
 // locally in list. The queried results are retained on rotation.
 // DONE: Display a message if no tracks found for artist
 // DONE: Display a loading spinner during the data retrieval
+
 /**
  * Fragment to display the top 10 tracks for a selected artist
  *

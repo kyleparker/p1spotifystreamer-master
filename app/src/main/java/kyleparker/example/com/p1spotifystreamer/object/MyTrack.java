@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import kaaes.spotify.webapi.android.models.Track;
 
 /**
- * Custom {@link Track} object used to implement Parcelable
+ * Custom {@link Track} object used to implement Parcelable.
  *
  * Created by kyleparker on 6/18/2015.
  */

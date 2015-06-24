@@ -10,8 +10,9 @@
     <color name="text_light">#ffffff</color>
     <color name="text_primary">#212121</color>
     <color name="text_secondary">#727272</color>
-    <color name="divider">#B6B6B6</color>
 
     <color name="background_content">#ffffffff</color>
     <color name="black_transparent">#4d000000</color>
+
+    <color name="divider">#B6B6B6</color>
 </resources>

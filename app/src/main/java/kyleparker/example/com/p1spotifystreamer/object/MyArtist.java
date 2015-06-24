@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import kaaes.spotify.webapi.android.models.Artist;
 
 /**
- * Custom {@link Artist} object used to implement Parcelable
+ * Custom {@link Artist} object used to implement Parcelable.
  *
  * Created by kyleparker on 6/23/2015.
  */

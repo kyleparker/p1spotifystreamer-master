@@ -14,6 +14,7 @@ import kyleparker.example.com.p1spotifystreamer.util.Constants;
 // DONE: Convert to fragments and provide a tablet layout
 // TODO: Add activity transition animations
 // TODO: Test on a tablet - structure should be in place, just need to test and tweak
+
 /**
  * Main activity for Project 1: Spotify Streamer app. This activity provides both phone and tablet layouts.
  *

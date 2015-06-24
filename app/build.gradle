@@ -45,10 +45,6 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.squareup.okhttp:okhttp:2.2.0'
 
-    // https://github.com/kanytu/android-parallax-recyclerview
-    // Parallax scrolling for a RecyclerView
-//    compile 'com.github.kanytu:android-parallax-recyclerview:v1.2'
-
     // https://github.com/ksoichiro/android-observablescrollview
     // Parallax scrolling for a RecyclerView
     compile 'com.github.ksoichiro:android-observablescrollview:v1.5.2'

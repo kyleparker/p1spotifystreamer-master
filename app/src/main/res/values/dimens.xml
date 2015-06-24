@@ -12,12 +12,11 @@
     <dimen name="cardview_corner_radius">0dp</dimen>
     <dimen name="cardview_elevation">4dp</dimen>
 
+    <dimen name="flexible_space_image_height">280dp</dimen>
+
     <dimen name="toolbar_elevation">4dp</dimen>
     <dimen name="text_size_medium">16sp</dimen>
     <dimen name="text_size_small">14sp</dimen>
     <dimen name="text_size_title">20sp</dimen>
     <dimen name="text_size_subtitle">14sp</dimen>
-
-    <dimen name="flexible_space_image_height">280dp</dimen>
-    <dimen name="intersection_height">16dp</dimen>
 </resources>
